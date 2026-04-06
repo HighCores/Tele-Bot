@@ -1,4 +1,5 @@
 import os, asyncio, logging, json
+# REDEPLOY_TRIGGER: Highcore Terminal Relay v2.1
 from datetime import datetime
 from aiogram import Bot, Dispatcher, types, F
 from aiogram.filters import Command
