@@ -90,7 +90,7 @@ async def send_discord_log(channel_key, title, body, color=0xFFFFFF):
     
     payload = {
         "embeds": [{
-            "title": f"\u2728 {title}",
+            "title": f"✨ {title}",
             "description": body,
             "color": color,
             "footer": {"text": "Highcore Agency \u2022 Agency Assistant"}
@@ -102,27 +102,27 @@ async def send_discord_log(channel_key, title, body, color=0xFFFFFF):
 
 # --- UTILS: AGENCY UI ---
 def get_agency_header(category: str, service: str):
-    return f"**\u25AC\u25AC\u25AC\u25AC\u25AC\u25AC\u25AC\u25AC\u25AC\u25AC\u25AC\u25AC\u25AC\u25AC\u25AC**\n\u2728 **{category.upper()}** \u2022 {service}\n**\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501**\n\n"
+    return f"**▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬**\n✨ **{category.upper()}** • {service}\n**━━━━━━━━━━━━━━━**\n\n"
 
 def get_agency_footer():
-    return f"\n\n**\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501**\n\uD83D\uDCCC *Highcore Agency \u2022 Professional Service Hub ({datetime.now().strftime('%H:%M:%S')})*"
+    return f"\n\n**━━━━━━━━━━━━━━━**\n📌 *Highcore Agency • Professional Service Hub ({datetime.now().strftime('%H:%M:%S')})*"
 
 # --- KEYBOARDS ---
 def main_kb():
     builder = InlineKeyboardBuilder()
-    builder.row(types.InlineKeyboardButton(text="\uD83D\uDCE9 Open Support Hub", callback_query_data="ticket_start"))
-    builder.row(types.InlineKeyboardButton(text="\uD83D\uDED2 Start New Project", callback_query_data="order_start"))
-    builder.row(types.InlineKeyboardButton(text="\uD83D\uDCCA Services", callback_query_data="view_services"),
-                types.InlineKeyboardButton(text="\uD83D\uDCAC Manager", url="https://t.me/OmarAmr"))
-    builder.row(types.InlineKeyboardButton(text="\uD83C\uDF10 Agency Dashboard", url="https://highcore-dashboard.vercel.app"))
+    builder.row(types.InlineKeyboardButton(text="📩 Open Support Hub", callback_query_data="ticket_start"))
+    builder.row(types.InlineKeyboardButton(text="🛒 Start New Project", callback_query_data="order_start"))
+    builder.row(types.InlineKeyboardButton(text="📊 Services", callback_query_data="view_services"),
+                types.InlineKeyboardButton(text="💬 Manager", url="https://t.me/OmarAmr"))
+    builder.row(types.InlineKeyboardButton(text="🌐 Agency Dashboard", url="https://highcore-dashboard.vercel.app"))
     return builder.as_markup()
 
 def ticket_categories_kb():
     builder = InlineKeyboardBuilder()
-    builder.row(types.InlineKeyboardButton(text="\uD83D\uDED2 Purchase Order", callback_query_data="cat_purchase"))
-    builder.row(types.InlineKeyboardButton(text="\uD83D\uDEE0\uFE0F Tech Support", callback_query_data="cat_support"))
-    builder.row(types.InlineKeyboardButton(text="\u26A0\uFE0F General Inquiry", callback_query_data="cat_complaint"))
-    builder.row(types.InlineKeyboardButton(text="\u2B05\uFE0F Back", callback_query_data="back_home"))
+    builder.row(types.InlineKeyboardButton(text="🛒 Purchase Order", callback_query_data="cat_purchase"))
+    builder.row(types.InlineKeyboardButton(text="🛠️ Tech Support", callback_query_data="cat_support"))
+    builder.row(types.InlineKeyboardButton(text="⚠️ General Inquiry", callback_query_data="cat_complaint"))
+    builder.row(types.InlineKeyboardButton(text="⬅️ Back", callback_query_data="back_home"))
     return builder.as_markup()
 
 # --- ASSISTANT LOGIC ---
@@ -168,7 +168,7 @@ async def on_chat_member(event: types.ChatMemberUpdated):
 async def cmd_start(message: types.Message, state: FSMContext):
     await state.clear()
     header = get_agency_header("AGENCY", "Main Menu")
-    body = "### \u2728 Welcome\nWelcome to the Highcore Agency Assistant. We are ready to assist you.\nPlease select an option below to begin."
+    body = "### ✨ Welcome\nWelcome to the Highcore Agency Assistant. We are ready to assist you.\nPlease select an option below to begin."
     await message.answer(header + body + get_agency_footer(), reply_markup=main_kb())
     await send_discord_log("CMD", "Command Log", f"User: {message.from_user.full_name}\nCommand: `/start`", 0x3498db)
 
