@@ -110,19 +110,19 @@ def get_agency_footer():
 # --- KEYBOARDS ---
 def main_kb():
     builder = InlineKeyboardBuilder()
-    builder.row(types.InlineKeyboardButton(text="📩 Open Support Hub", callback_query_data="ticket_start"))
-    builder.row(types.InlineKeyboardButton(text="🛒 Start New Project", callback_query_data="order_start"))
-    builder.row(types.InlineKeyboardButton(text="📊 Services", callback_query_data="view_services"),
+    builder.row(types.InlineKeyboardButton(text="📩 Open Support Hub", callback_data="ticket_start"))
+    builder.row(types.InlineKeyboardButton(text="🛒 Start New Project", callback_data="order_start"))
+    builder.row(types.InlineKeyboardButton(text="📊 Services", callback_data="view_services"),
                 types.InlineKeyboardButton(text="💬 Manager", url="https://t.me/OmarAmr"))
     builder.row(types.InlineKeyboardButton(text="🌐 Agency Dashboard", url="https://highcore-dashboard.vercel.app"))
     return builder.as_markup()
 
 def ticket_categories_kb():
     builder = InlineKeyboardBuilder()
-    builder.row(types.InlineKeyboardButton(text="🛒 Purchase Order", callback_query_data="cat_purchase"))
-    builder.row(types.InlineKeyboardButton(text="🛠️ Tech Support", callback_query_data="cat_support"))
-    builder.row(types.InlineKeyboardButton(text="⚠️ General Inquiry", callback_query_data="cat_complaint"))
-    builder.row(types.InlineKeyboardButton(text="⬅️ Back", callback_query_data="back_home"))
+    builder.row(types.InlineKeyboardButton(text="🛒 Purchase Order", callback_data="cat_purchase"))
+    builder.row(types.InlineKeyboardButton(text="🛠️ Tech Support", callback_data="cat_support"))
+    builder.row(types.InlineKeyboardButton(text="⚠️ General Inquiry", callback_data="cat_complaint"))
+    builder.row(types.InlineKeyboardButton(text="⬅️ Back", callback_data="back_home"))
     return builder.as_markup()
 
 # --- ASSISTANT LOGIC ---
@@ -292,11 +292,11 @@ async def ticket_open(callback: types.CallbackQuery):
 @dp.callback_query(F.data == "order_start")
 async def order_start(callback: types.CallbackQuery, state: FSMContext):
     builder = InlineKeyboardBuilder()
-    builder.row(types.InlineKeyboardButton(text="\uD83C\uDFA8 Digital Designer", callback_query_data="wiz_designer"))
-    builder.row(types.InlineKeyboardButton(text="\u2699\uFE0F Software Developer", callback_query_data="wiz_developer"))
-    builder.row(types.InlineKeyboardButton(text="\u26CF\uFE0F Minecraft Specialist", callback_query_data="wiz_minecraft"))
-    builder.row(types.InlineKeyboardButton(text="\uD83C\uDFAC Video Editor", callback_query_data="wiz_editor"))
-    builder.row(types.InlineKeyboardButton(text="\u2B05\uFE0F Back", callback_query_data="back_home"))
+    builder.row(types.InlineKeyboardButton(text="🎨 Digital Designer", callback_data="wiz_designer"))
+    builder.row(types.InlineKeyboardButton(text="⚙️ Software Developer", callback_data="wiz_developer"))
+    builder.row(types.InlineKeyboardButton(text="⛏️ Minecraft Specialist", callback_data="wiz_minecraft"))
+    builder.row(types.InlineKeyboardButton(text="🎬 Video Editor", callback_data="wiz_editor"))
+    builder.row(types.InlineKeyboardButton(text="⬅️ Back", callback_data="back_home"))
     
     header = get_agency_header("ORDERS", "Service Selection")
     await callback.message.edit_text(header + "Select the primary department for your project:" + get_agency_footer(), reply_markup=builder.as_markup())
@@ -312,11 +312,11 @@ async def order_cat_selected(callback: types.CallbackQuery, state: FSMContext):
 async def show_service_menu(callback, cat, selected_ids):
     builder = InlineKeyboardBuilder()
     for srv in SERVICES[cat]:
-        check = "\u2705 " if srv['id'] in selected_ids else ""
-        builder.row(types.InlineKeyboardButton(text=f"{check}{srv['name']} (${srv['price']})", callback_query_data=f"toggle_{srv['id']}"))
+        check = "✅ " if srv['id'] in selected_ids else ""
+        builder.row(types.InlineKeyboardButton(text=f"{check}{srv['name']} (${srv['price']})", callback_data=f"toggle_{srv['id']}"))
     
-    builder.row(types.InlineKeyboardButton(text="\u27A1\uFE0F Next Step (Addons)", callback_query_data="step_addons"))
-    builder.row(types.InlineKeyboardButton(text="\u2B05\uFE0F Re-select Category", callback_query_data="order_start"))
+    builder.row(types.InlineKeyboardButton(text="➡️ Next Step (Addons)", callback_data="step_addons"))
+    builder.row(types.InlineKeyboardButton(text="⬅️ Re-select Category", callback_data="order_start"))
     
     header = get_agency_header("ORDERS", f"{cat.upper()} DEPARTMENT")
     await callback.message.edit_text(header + "### \uD83D\uDCE1 Service Allocation\nSelect one or more core services for your project:" + get_agency_footer(), reply_markup=builder.as_markup())
@@ -346,13 +346,13 @@ async def step_addons(callback: types.CallbackQuery, state: FSMContext):
 async def show_addon_menu(callback, cat, selected_ids):
     builder = InlineKeyboardBuilder()
     for add in ADDONS.get(cat, []):
-        check = "\u2705 " if add['id'] in selected_ids else ""
-        builder.row(types.InlineKeyboardButton(text=f"{check}{add['name']} (+${add['price']})", callback_query_data=f"atogl_{add['id']}"))
+        check = "✅ " if add['id'] in selected_ids else ""
+        builder.row(types.InlineKeyboardButton(text=f"{check}{add['name']} (+${add['price']})", callback_data=f"atogl_{add['id']}"))
     
-    builder.row(types.InlineKeyboardButton(text="\u27A1\uFE0F Submit Details", callback_query_data="step_specs"))
+    builder.row(types.InlineKeyboardButton(text="➡️ Submit Details", callback_data="step_specs"))
     
     header = get_agency_header("ORDERS", "Service Add-ons")
-    await callback.message.edit_text(header + "### \uD83D\uDD04 Advanced Features\nEnhance your project with these specialized modules:" + get_agency_footer(), reply_markup=builder.as_markup())
+    await callback.message.edit_text(header + "### 🔄 Advanced Features\nEnhance your project with these specialized modules:" + get_agency_footer(), reply_markup=builder.as_markup())
 
 @dp.callback_query(F.data.startswith("atogl_"), OrderStates.selecting_addons)
 async def toggle_addon(callback: types.CallbackQuery, state: FSMContext):
@@ -397,8 +397,8 @@ async def order_specs_received(message: types.Message, state: FSMContext):
         f"Proceed with official registration?"
     )
     builder = InlineKeyboardBuilder()
-    builder.row(types.InlineKeyboardButton(text="\u2705 CONFIRM & REGISTER", callback_query_data="order_confirm"))
-    builder.row(types.InlineKeyboardButton(text="\u274C CANCEL", callback_query_data="back_home"))
+    builder.row(types.InlineKeyboardButton(text="✅ CONFIRM & REGISTER", callback_data="order_confirm"))
+    builder.row(types.InlineKeyboardButton(text="❌ CANCEL", callback_data="back_home"))
     await message.answer(summary, reply_markup=builder.as_markup())
     await state.set_state(OrderStates.confirming)
 
