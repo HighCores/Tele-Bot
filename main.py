@@ -195,6 +195,56 @@ async def cmd_kick(message: types.Message, command: CommandObject):
     except Exception as e:
         await message.answer(f"\u274C **Error:** {str(e)}")
 
+@dp.message(Command("ban"))
+async def cmd_ban(message: types.Message, command: CommandObject):
+    if not message.reply_to_message:
+        return await message.reply("\u26A0\uFE0F Reply to a user to ban them.")
+    
+    user = message.reply_to_message.from_user
+    try:
+        await bot.ban_chat_member(message.chat.id, user.id)
+        await message.answer(f"\uD83D\uDD34 **User Banned:** {user.full_name} has been restricted from the agency group.")
+        await send_discord_log("MOD", "Moderation Log", f"**Action:** BAN\n**User:** {user.full_name}\n**Moderator:** {message.from_user.full_name}", 0xc0392b)
+    except Exception as e:
+        await message.answer(f"\u274C **Error:** {str(e)}")
+
+@dp.message(Command("unban"))
+async def cmd_unban(message: types.Message, command: CommandObject):
+    try:
+        user_id = int(command.args) if command.args else None
+        if not user_id: return await message.reply("\u26A0\uFE0F Please provide a User ID: `/unban ID`.")
+        await bot.unban_chat_member(message.chat.id, user_id)
+        await message.answer(f"\u2705 **User Unbanned:** The restriction for ID `{user_id}` has been lifted.")
+        await send_discord_log("MOD", "Moderation Log", f"**Action:** UNBAN\n**User ID:** `{user_id}`\n**Moderator:** {message.from_user.full_name}", 0x27ae60)
+    except Exception as e:
+        await message.answer(f"\u274C **Error:** {str(e)}")
+
+@dp.message(Command("warn"))
+async def cmd_warn(message: types.Message, command: CommandObject):
+    if not message.reply_to_message:
+        return await message.reply("\u26A0\uFE0F Reply to a user to issue a warning.")
+    
+    user = message.reply_to_message.from_user
+    reason = command.args if command.args else "No reason provided."
+    
+    try:
+        supabase.table("dc_warnings").insert({
+            "user_id": str(user.id),
+            "user_name": user.full_name,
+            "warned_by": str(message.from_user.id),
+            "warned_by_name": message.from_user.full_name,
+            "reason": reason,
+            "guild_id": "telegram"
+        }).execute()
+        
+        res = supabase.table("dc_warnings").select("*", count="exact").eq("user_id", str(user.id)).execute()
+        warn_count = res.count if res.count else 0
+        
+        await message.answer(f"\u26A0\uFE0F **Professional Warning Issued**\n**User:** {user.full_name}\n**Count:** {warn_count}\n**Reason:** {reason}")
+        await send_discord_log("WARN", "Warning Log (TG)", f"**User:** {user.full_name} (`{user.id}`)\n**Reason:** {reason}\n**Total Warnings:** {warn_count}\n**Mod:** {message.from_user.full_name}", 0xf39c12)
+    except Exception as e:
+        await message.answer(f"\u274C **Error:** {str(e)}")
+
 @dp.callback_query(F.data == "back_home")
 async def back_home(callback: types.CallbackQuery, state: FSMContext):
     await state.clear()
