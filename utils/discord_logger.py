@@ -10,7 +10,7 @@ from config import (
     LOG_CHANNEL_MOD_CMD
 )
 
-BANNER_MAIN = "https://i.imgur.com/Lzun3rb.png"
+BANNER_MAIN = "https://i.imgur.com/RDb9nSh.png"
 
 async def send_discord_log(channel_id: str, action: str, user_info: str, details: str, color: int = 0x2b2d31):
     logging.info(f"Attempting to send log to channel: {channel_id}")
