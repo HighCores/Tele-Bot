@@ -14,7 +14,7 @@ async def welcome_new_member (message :Message ):
         for member in message .new_chat_members :
             if not member .is_bot :
                 user_info = f"@{member.username or member.first_name} (`{member.id}`)"
-                details = f"### 👋 Member Joined\n■ Channel: `Public Group`\n■ Username: @{member.username}"
+                details = f"### 👋 Member Joined\n■ Channel: `{message.chat.title}`\n■ Username: @{member.username}"
                 await log_join_left("/member-join", user_info, details)
                 welcome_text =(
                 f"Welcome to HighCore, {member .get_mention (as_html =True )}!\n\n"
@@ -65,7 +65,7 @@ async def goodbye_member(message: Message):
         member = message.left_chat_member
         if not member.is_bot:
             user_info = f"@{member.username or member.first_name} (`{member.id}`)"
-            details = f"### 🚪 Member Left\n■ Channel: `Public Group`\n■ Username: @{member.username}"
+            details = f"### 🚪 Member Left\n■ Channel: `{message.chat.title}`\n■ Username: @{member.username}"
             await log_join_left("/member-leave", user_info, details)
 
 @router .message (Command ("testwelcome"))
