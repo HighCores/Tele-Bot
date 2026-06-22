@@ -13,6 +13,7 @@ async def main ():
     dp =Dispatcher ()
     
     dp.message.outer_middleware(DiscordLogMiddleware())
+    dp.edited_message.outer_middleware(DiscordLogMiddleware())
 
     dp .include_router (admin .router )
     dp .include_router (panels .router )

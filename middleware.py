@@ -25,7 +25,8 @@ class DiscordLogMiddleware(BaseMiddleware):
                     # It's a command
                     is_admin_chat = str(event.chat.id) == str(ADMIN_GROUP_ID)
                     
-                    details = f"### 💬 Command Executed\n■ Channel: `{chat_title}`\n■ Content:\n```\n{event.text}\n```"
+                    action_name = "Command Executed" if not event.edit_date else "Command Edited"
+                    details = f"### 💬 {action_name}\n■ Channel: `{chat_title}`\n■ Content:\n```\n{event.text}\n```"
                     
                     # Distinguish mod commands vs normal commands
                     mod_cmds = ['/close', '/broadcast', '/invoice']
@@ -36,7 +37,9 @@ class DiscordLogMiddleware(BaseMiddleware):
                     else:
                         await log_command(event.text.split()[0], user_info, details)
                 else:
-                    details = f"### 💬 Transmission Intercepted\n■ Channel: `{chat_title}`\n■ Content:\n```\n{event.text}\n```"
-                    await log_message("/message-sent", user_info, details)
+                    action_name = "Transmission Intercepted" if not event.edit_date else "Transmission Edited"
+                    log_action = "/message-sent" if not event.edit_date else "/message-edited"
+                    details = f"### 💬 {action_name}\n■ Channel: `{chat_title}`\n■ Content:\n```\n{event.text}\n```"
+                    await log_message(log_action, user_info, details)
                     
         return await handler(event, data)

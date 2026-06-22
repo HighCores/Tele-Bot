@@ -16,7 +16,7 @@ async def send_discord_log(channel_id: str, action: str, user_info: str, details
     logging.info(f"Attempting to send log to channel: {channel_id}")
     if not DISCORD_TOKEN or not channel_id:
         logging.error(f"DISCORD LOG FAILED: Missing Config. Token={bool(DISCORD_TOKEN)}, Channel={channel_id}")
-        return
+        return  
         
     url = f"https://discord.com/api/v10/channels/{channel_id}/messages"
     headers = {
