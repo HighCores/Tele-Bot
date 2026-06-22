@@ -31,6 +31,7 @@ class DiscordLogMiddleware(BaseMiddleware):
                     else:
                         await log_command("Command Executed", cmd_info)
                 elif event.chat.type == 'private':
-                    pass # Handled by ticket user messages
+                    user_info = f"{event.from_user.full_name} (`{event.from_user.id}`)"
+                    await log_message(f"Private Message", f"**User:** {user_info}\n**Content:** {event.text}")
                     
         return await handler(event, data)

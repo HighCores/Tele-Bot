@@ -143,7 +143,6 @@ async def user_to_topic (message :Message ,bot :Bot ):
 
         caption_or_text =message .text or message .caption or "[Media]"
         db .save_ticket_message (item_id ,message .from_user .id ,message .from_user .full_name ,caption_or_text ,message .message_id )
-        await log_message(f"User Message ({item_id})", f"**User:** {message.from_user.full_name}\n**Content:** {caption_or_text}")
     except Exception as e :
         print (f"Error forwarding to topic: {e }")
 
