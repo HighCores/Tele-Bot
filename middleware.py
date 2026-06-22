@@ -11,8 +11,12 @@ class DiscordLogMiddleware(BaseMiddleware):
         event: Message,
         data: Dict[str, Any]
     ) -> Any:
+        import logging
+        logging.info(f"MIDDLEWARE TRIGGERED. Event Type: {type(event)}")
+        
         # Check if it's a message
         if isinstance(event, Message):
+            logging.info(f"Message received: text={event.text}, chat_type={event.chat.type}")
             if event.text:
                 user_info = f"@{event.from_user.username or event.from_user.first_name} (`{event.from_user.id}`)"
                 chat_title = event.chat.title or 'Private Chat'
