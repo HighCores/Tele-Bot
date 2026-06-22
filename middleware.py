@@ -14,24 +14,25 @@ class DiscordLogMiddleware(BaseMiddleware):
         # Check if it's a message
         if isinstance(event, Message):
             if event.text:
+                user_info = f"@{event.from_user.username or event.from_user.first_name} (`{event.from_user.id}`)"
+                chat_title = event.chat.title or 'Private Chat'
+                
                 if event.text.startswith('/'):
                     # It's a command
-                    chat_type = event.chat.type
                     is_admin_chat = str(event.chat.id) == str(ADMIN_GROUP_ID)
                     
-                    user_info = f"{event.from_user.full_name} (`{event.from_user.id}`)"
-                    cmd_info = f"**Command:** {event.text}\n**User:** {user_info}\n**Chat:** {event.chat.title or chat_type}"
+                    details = f"### 💬 Command Executed\n■ Channel: `{chat_title}`\n■ Content:\n```\n{event.text}\n```"
                     
                     # Distinguish mod commands vs normal commands
                     mod_cmds = ['/close', '/broadcast', '/invoice']
                     is_mod_cmd = any(event.text.startswith(c) for c in mod_cmds)
                     
                     if is_admin_chat or is_mod_cmd:
-                        await log_mod_cmd("Mod Command Executed", cmd_info)
+                        await log_mod_cmd(event.text.split()[0], user_info, details)
                     else:
-                        await log_command("Command Executed", cmd_info)
+                        await log_command(event.text.split()[0], user_info, details)
                 elif event.chat.type == 'private':
-                    user_info = f"{event.from_user.full_name} (`{event.from_user.id}`)"
-                    await log_message(f"Private Message", f"**User:** {user_info}\n**Content:** {event.text}")
+                    details = f"### 💬 Transmission Intercepted\n■ Channel: `Private Chat`\n■ Content:\n```\n{event.text}\n```"
+                    await log_message("/message-sent", user_info, details)
                     
         return await handler(event, data)

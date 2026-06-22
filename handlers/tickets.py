@@ -106,7 +106,9 @@ async def process_ticket_subject (message :Message ,state :FSMContext ,bot :Bot 
             reply_markup =kb .as_markup ()
             )
 
-        await log_ticket("Ticket Created", f"**Ticket ID:** {ticket_id}\n**User:** {message.from_user.full_name} (`{message.from_user.id}`)\n**Type:** {ticket_type}\n**Subject:** {subject}")
+        user_info = f"@{message.from_user.username or message.from_user.first_name} (`{message.from_user.id}`)"
+        details = f"### 🎫 Ticket Creation\n■ Type: `{ticket_type}`\n■ Ticket ID: `{ticket_id}`\n■ Subject:\n```\n{subject}\n```"
+        await log_ticket("/ticket-created", user_info, details)
 
         await message .answer (f"✅ Your ticket has been created! Ticket ID: <b>{ticket_id }</b>\nAn admin will review it shortly. You can send further messages here.")
     except Exception as e :
