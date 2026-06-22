@@ -1,4 +1,5 @@
 import aiohttp
+import logging
 from datetime import datetime
 from config import (
     DISCORD_TOKEN,
@@ -12,12 +13,12 @@ from config import (
 BANNER_MAIN = "https://i.imgur.com/Lzun3rb.png"
 
 async def send_discord_log(channel_id: str, action: str, user_info: str, details: str, color: int = 0x2b2d31):
+    logging.info(f"Attempting to send log to channel: {channel_id}")
     if not DISCORD_TOKEN or not channel_id:
-        print(f"DISCORD LOG FAILED: Missing Config. Token={bool(DISCORD_TOKEN)}, Channel={channel_id}")
+        logging.error(f"DISCORD LOG FAILED: Missing Config. Token={bool(DISCORD_TOKEN)}, Channel={channel_id}")
         return
         
     url = f"https://discord.com/api/v10/channels/{channel_id}/messages"
-    print(f"Sending Discord log to {channel_id}: {action}")
     headers = {
         "Authorization": f"Bot {DISCORD_TOKEN}",
         "Content-Type": "application/json"
@@ -47,11 +48,11 @@ async def send_discord_log(channel_id: str, action: str, user_info: str, details
         async with aiohttp.ClientSession() as session:
             async with session.post(url, headers=headers, json=payload) as response:
                 if response.status not in (200, 204):
-                    print(f"Failed to send Discord log: {response.status} - {await response.text()}")
+                    logging.error(f"Failed to send Discord log: {response.status} - {await response.text()}")
                 else:
-                    print("Successfully sent Discord log.")
+                    logging.info(f"Successfully sent Discord log to {channel_id}.")
     except Exception as e:
-        print(f"Error sending Discord log: {e}")
+        logging.error(f"Error sending Discord log: {e}")
 
 async def log_ticket(action: str, user_info: str, details: str):
     await send_discord_log(LOG_CHANNEL_TICKETS, action, user_info, details, color=0x5865F2)
