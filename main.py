@@ -12,7 +12,7 @@ async def main ():
     bot =Bot (token =BOT_TOKEN ,default =DefaultBotProperties (parse_mode ="HTML"))
     dp =Dispatcher ()
     
-    dp.message.middleware(DiscordLogMiddleware())
+    dp.message.outer_middleware(DiscordLogMiddleware())
 
     dp .include_router (admin .router )
     dp .include_router (panels .router )
