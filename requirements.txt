@@ -1,5 +1,4 @@
-aiogram
-google-generativeai
-supabase
-python-dotenv
-asyncio
+aiogram>=3.4.1
+supabase>=2.3.4
+python-dotenv>=1.0.1
+Pillow>=10.0.0
