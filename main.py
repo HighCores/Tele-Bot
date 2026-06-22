@@ -3,7 +3,7 @@ import logging
 from aiogram import Bot ,Dispatcher 
 from config import BOT_TOKEN 
 from handlers import panels ,tickets ,orders ,admin ,welcome 
-
+from middleware import DiscordLogMiddleware
 from aiogram .client .default import DefaultBotProperties 
 
 async def main ():
@@ -11,6 +11,8 @@ async def main ():
 
     bot =Bot (token =BOT_TOKEN ,default =DefaultBotProperties (parse_mode ="HTML"))
     dp =Dispatcher ()
+    
+    dp.message.middleware(DiscordLogMiddleware())
 
     dp .include_router (admin .router )
     dp .include_router (panels .router )

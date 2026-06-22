@@ -1,9 +1,10 @@
 import os 
 from aiogram import Router ,F 
 from aiogram .types import Message ,FSInputFile 
-from aiogram .filters import Command 
-from config import PUBLIC_GROUP_ID ,WELCOME_TOPIC_ID 
-from utils .welcome_generator import generate_welcome_card 
+from aiogram.filters import Command 
+from config import PUBLIC_GROUP_ID, WELCOME_TOPIC_ID 
+from utils.welcome_generator import generate_welcome_card 
+from utils.discord_logger import log_join_left
 
 router =Router ()
 
@@ -12,6 +13,7 @@ async def welcome_new_member (message :Message ):
     if str (message .chat .id )==str (PUBLIC_GROUP_ID ):
         for member in message .new_chat_members :
             if not member .is_bot :
+                await log_join_left("User Joined (Telegram)", f"**User:** {member.full_name} (`{member.id}`)\n**Username:** @{member.username}")
                 welcome_text =(
                 f"Welcome to HighCore, {member .get_mention (as_html =True )}!\n\n"
                 f"Check out our services by messaging our bot directly."
@@ -54,6 +56,14 @@ async def welcome_new_member (message :Message ):
                     text =welcome_text ,
                     parse_mode ="HTML"
                     )
+
+@router.message(F.left_chat_member)
+async def goodbye_member(message: Message):
+    if str(message.chat.id) == str(PUBLIC_GROUP_ID):
+        member = message.left_chat_member
+        if not member.is_bot:
+            await log_join_left("User Left (Telegram)", f"**User:** {member.full_name} (`{member.id}`)\n**Username:** @{member.username}")
+
 @router .message (Command ("testwelcome"))
 async def cmd_test_welcome (message :Message ):
     member =message .from_user 

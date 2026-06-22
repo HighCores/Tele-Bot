@@ -5,6 +5,7 @@ from aiogram .fsm .context import FSMContext
 from aiogram .fsm .state import State ,StatesGroup 
 from config import ADMIN_GROUP_ID 
 import db 
+from utils.discord_logger import log_ticket, log_message
 
 router =Router ()
 
@@ -105,6 +106,8 @@ async def process_ticket_subject (message :Message ,state :FSMContext ,bot :Bot 
             reply_markup =kb .as_markup ()
             )
 
+        await log_ticket("Ticket Created", f"**Ticket ID:** {ticket_id}\n**User:** {message.from_user.full_name} (`{message.from_user.id}`)\n**Type:** {ticket_type}\n**Subject:** {subject}")
+
         await message .answer (f"✅ Your ticket has been created! Ticket ID: <b>{ticket_id }</b>\nAn admin will review it shortly. You can send further messages here.")
     except Exception as e :
         await message .answer ("❌ Error creating ticket. Please contact an admin directly.")
@@ -140,6 +143,7 @@ async def user_to_topic (message :Message ,bot :Bot ):
 
         caption_or_text =message .text or message .caption or "[Media]"
         db .save_ticket_message (item_id ,message .from_user .id ,message .from_user .full_name ,caption_or_text ,message .message_id )
+        await log_message(f"User Message ({item_id})", f"**User:** {message.from_user.full_name}\n**Content:** {caption_or_text}")
     except Exception as e :
         print (f"Error forwarding to topic: {e }")
 
@@ -171,5 +175,6 @@ async def topic_to_user (message :Message ,bot :Bot ):
         )
         caption_or_text =message .text or message .caption or "[Media]"
         db .save_ticket_message (ticket ['ticket_id'],message .from_user .id ,message .from_user .full_name ,caption_or_text ,message .message_id )
+        await log_message(f"Admin Message ({ticket['ticket_id']})", f"**Admin:** {message.from_user.full_name}\n**Content:** {caption_or_text}")
     except Exception as e :
         print (f"Error forwarding to user: {e }")
