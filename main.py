@@ -23,7 +23,7 @@ async def main ():
 
     logging .info ("Starting HighCore Telegram Bot...")
     await bot .delete_webhook (drop_pending_updates =True )
-    await dp .start_polling (bot )
+    await dp .start_polling (bot, allowed_updates=["message", "edited_message", "callback_query", "chat_member", "my_chat_member"])
 
 if __name__ =="__main__":
     asyncio .run (main ())

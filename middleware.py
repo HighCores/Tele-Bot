@@ -38,10 +38,9 @@ class DiscordLogMiddleware(BaseMiddleware):
                     else:
                         await log_command(event.text.split()[0], user_info, details)
                 else:
-                    channel_name = "# ⛔message・logs"
                     action_name = "Transmission Intercepted" if not event.edit_date else "Transmission Edited"
                     log_action = "/message-sent" if not event.edit_date else "/message-edited"
-                    details = f"### 💬 {action_name}\n■ Channel: `{channel_name}`\n■ Content:\n```\n{event.text}\n```"
+                    details = f"### 💬 {action_name}\n■ Channel: `{chat_title}`\n■ Content:\n```\n{event.text}\n```"
                     await log_message(log_action, user_info, details)
                     
         return await handler(event, data)
