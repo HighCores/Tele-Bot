@@ -35,8 +35,8 @@ class DiscordLogMiddleware(BaseMiddleware):
                         await log_mod_cmd(event.text.split()[0], user_info, details)
                     else:
                         await log_command(event.text.split()[0], user_info, details)
-                elif event.chat.type == 'private':
-                    details = f"### 💬 Transmission Intercepted\n■ Channel: `Private Chat`\n■ Content:\n```\n{event.text}\n```"
+                else:
+                    details = f"### 💬 Transmission Intercepted\n■ Channel: `{chat_title}`\n■ Content:\n```\n{event.text}\n```"
                     await log_message("/message-sent", user_info, details)
                     
         return await handler(event, data)
